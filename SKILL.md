@@ -78,11 +78,12 @@ pnpm create next-app@latest <name> \
   --app \
   --src-dir \
   --import-alias "@/*" \
-  --no-turbopack
+  --no-turbopack \
+  --yes
 ```
 > `--no-turbopack` prevents better-auth SSR errors during development. You can
-> re-enable it later by removing this flag once better-auth ships a
-> Turbopack-compatible release.
+> re-enable it later once better-auth ships a Turbopack-compatible release.
+> `--yes` skips interactive prompts so the command runs non-interactively.
 
 **Production dependencies**
 ```
@@ -102,8 +103,16 @@ pnpm add -D \
   vitest @vitejs/plugin-react jsdom \
   @testing-library/react @testing-library/jest-dom @testing-library/user-event \
   @playwright/test \
-  @storybook/nextjs @storybook/addon-essentials storybook
+  "@storybook/nextjs@^8" "@storybook/addon-essentials@^8" "@storybook/react@^8" "storybook@^8"
 ```
+> Storybook must be pinned to v8 — v10 ships with peer dep conflicts that break
+> installs. `@storybook/react` must be listed explicitly for type imports in
+> stories and test utilities.
+>
+> `@storybook/nextjs@8` declares peer support only up to Next.js 15. pnpm will
+> show a peer dep warning with Next.js 16 but will install it anyway and it works
+> correctly. Do NOT switch to `@storybook/react-vite` to avoid this warning — it
+> introduces a Vite version conflict with Vitest 4.
 
 Only proceed once the user confirms.
 
@@ -114,10 +123,14 @@ Only proceed once the user confirms.
 ```bash
 pnpm create next-app@latest <name> \
   --typescript --tailwind --eslint --app --src-dir \
-  --import-alias "@/*" --no-turbopack
+  --import-alias "@/*" --no-turbopack --yes
 ```
 
-Stream the output. After it finishes, verify `node_modules` was populated:
+Run this **synchronously** (not in background) with a timeout of at least
+5 minutes — it downloads and installs Next.js and its deps. Wait for it to
+finish before proceeding.
+
+After it finishes, verify `node_modules` was populated:
 
 ```bash
 test -d <name>/node_modules && ls <name>/node_modules | head -5
@@ -151,6 +164,11 @@ pnpm add -D drizzle-kit @types/pg \
 every config. Create each file listed there, substituting `<locale>` and
 `<db_url>` as appropriate. The files to create are:
 
+**Design System Note:** If the project has a `DESIGN.md` file (document defining
+color tokens, typography, spacing, component patterns, etc.), reference it when
+setting up Tailwind configuration and creating CSS variables. The design tokens
+should align with any existing brand system defined in DESIGN.md.
+
 - `.env` (DATABASE_URL + BETTER_AUTH_SECRET)
 - `drizzle.config.ts`
 - `next.config.ts` (next-intl plugin + serverExternalPackages)
@@ -163,6 +181,7 @@ every config. Create each file listed there, substituting `<locale>` and
 - `.storybook/main.ts` + `.storybook/preview.ts`
 - `.prettierrc`
 - `src/lib/logger.ts`
+- `tsconfig.json` — merge the Storybook `exclude` entries (see configs.md)
 
 Generate `BETTER_AUTH_SECRET`:
 ```bash
@@ -238,6 +257,14 @@ Create `src/lib/auth.ts` and `src/app/api/auth/[...all]/route.ts` — see
 **Now read `references/example-form.md`** — it contains the full implementation
 of the sign-up form, its unit test, and its Storybook story.
 
+**Design System Reference:** If the project has a `DESIGN.md` file, consult its
+sections on:
+- **Components** (section 7.2 "Inputs & Forms") for form field styling and layout rules
+- **Typography** (section 3) for label and input text sizes
+- **Color** (section 2) for input states (focus, error, disabled) and validation colors
+- **Spacing & Layout** (section 4) for form field gaps and padding
+- **Accessibility** (section 11) for focus states and form error announcements
+
 Create these files:
 
 - `src/test-utils/intl.tsx` — shared next-intl wrapper for tests and stories
@@ -273,14 +300,44 @@ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000
 
 ---
 
-## 11. Report to user
+## 11. Install project-level skills
+
+Copy frontend-design and security-guidance skills to the project's `.claude/skills/`
+directory so they're available whenever the user works in this project.
+
+```bash
+mkdir -p .claude/skills
+```
+
+Then locate and copy each skill from the user's global skill directory:
+
+- **frontend-design** → `~/.claude/skills/frontend-design/` → `<project>/.claude/skills/frontend-design/`
+- **security-guidance** → `~/.claude/skills/security-guidance/` → `<project>/.claude/skills/security-guidance/`
+
+Use `cp -r` to copy the entire skill directory (SKILL.md + bundled resources).
+
+If either skill is not found in the user's global skills directory, note it and
+continue — the project will still work, and the user can manually copy these
+skills later if needed.
+
+---
+
+## 12. Report to user
 
 Tell the user:
 
 1. The app is running at http://localhost:3000
 2. Where `.env` is (absolute path) and which vars are set vs blank
 3. The project structure (run `find src db messages -type f | sort`)
-4. Next steps: "Run `pnpm db:studio` to browse data, `pnpm storybook` to view
-   the component explorer, `pnpm test:e2e` to run Playwright."
+4. Project-level skills installed: frontend-design and security-guidance are now
+   available in `.claude/skills/` — they'll load automatically when working in
+   this project
+5. **Design System:** If the project includes a `DESIGN.md` file, emphasize that
+   it's the reference for all component patterns, colors, typography, spacing,
+   and accessibility rules. All new components and pages should follow the
+   patterns defined there.
+6. Next steps: "Run `pnpm db:studio` to browse data, `pnpm storybook` to view
+   the component explorer, `pnpm test:e2e` to run Playwright, and refer to
+   `DESIGN.md` when building new components or pages."
 
 Keep it short — they want to start building.

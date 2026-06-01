@@ -36,19 +36,39 @@ export default defineConfig({
 
 ```ts
 import createNextIntlPlugin from "next-intl/plugin";
+import type { NextConfig } from "next";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
-const nextConfig = {
-  serverExternalPackages: ["better-auth"],
+const nextConfig: NextConfig = {
+  serverExternalPackages: [
+    "better-auth",
+    "@better-auth/kysely-adapter",
+    "kysely",
+    "pg",
+    "drizzle-orm",
+  ],
+  turbopack: {
+    ignoreIssue: [
+      {
+        path: /@better-auth\/kysely-adapter/,
+        title: /Export .* doesn't exist in target module/,
+      },
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);
 ```
 
 > `serverExternalPackages` prevents better-auth from being bundled by Next.js's
-> server compiler, which causes "useRef" errors when better-auth is imported in
-> server components or middleware.
+> server compiler, which causes "useRef" errors in SSR. Including `pg` and
+> `drizzle-orm` avoids native-binding issues during build.
+>
+> `turbopack.ignoreIssue` suppresses a build-time error from better-auth's
+> transitive dependency `@better-auth/kysely-adapter` which references a kysely
+> export path that moved in newer kysely versions. This is a third-party bug;
+> ignoring it is safe because the drizzle adapter does not use kysely.
 
 ---
 

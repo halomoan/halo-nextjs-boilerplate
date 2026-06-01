@@ -230,11 +230,14 @@ describe("SignUpForm", () => {
     await userEvent.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith({
-        name: "Jane Doe",
-        email: "jane@example.com",
-        password: "password123",
-      });
+      expect(onSubmit).toHaveBeenCalledWith(
+        {
+          name: "Jane Doe",
+          email: "jane@example.com",
+          password: "password123",
+        },
+        expect.anything() // RHF passes the submit event as second arg
+      );
     });
   });
 });
