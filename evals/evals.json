@@ -1,0 +1,185 @@
+{
+  "skill_name": "nextjs-boilerplate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to build a new web app. Scaffold it for me — call it `my-todo-app`, DB at `postgresql://postgres:password@localhost:5432/todos`, French as the second locale (`fr`). Proceed with the defaults and confirm the dependency list before installing.",
+      "expected_output": "A scaffolded Next.js 15 project named my-todo-app with all config files generated, drizzle schema created, better-auth wired up, sign-up form built with RHF+Zod+next-intl, unit test and Storybook story present, lint and tests passing.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "drizzle-config-correct",
+          "description": "drizzle.config.ts exists, references db/schema.ts as schema path, and sets dialect to postgresql"
+        },
+        {
+          "name": "nextconfig-has-intl-plugin",
+          "description": "next.config.ts imports and uses createNextIntlPlugin (or withNextIntl)"
+        },
+        {
+          "name": "nextconfig-has-ssr-fix",
+          "description": "next.config.ts has serverExternalPackages array that includes 'better-auth'"
+        },
+        {
+          "name": "middleware-has-both-locales",
+          "description": "src/middleware.ts (or i18n/routing.ts) defines both 'en' and 'fr' in the locales array"
+        },
+        {
+          "name": "en-messages-has-signupform",
+          "description": "messages/en.json contains a SignUpForm key with at least a 'submit' subkey"
+        },
+        {
+          "name": "locale-messages-file-exists",
+          "description": "messages/fr.json exists (the French locale file)"
+        },
+        {
+          "name": "form-uses-translations",
+          "description": "SignUpForm.tsx calls useTranslations and does NOT contain hardcoded English button or label text"
+        },
+        {
+          "name": "form-uses-rhf-zod",
+          "description": "SignUpForm.tsx imports useForm from react-hook-form and zodResolver from @hookform/resolvers/zod"
+        },
+        {
+          "name": "test-uses-rtl",
+          "description": "SignUpForm.test.tsx imports from @testing-library/react"
+        },
+        {
+          "name": "test-has-three-cases",
+          "description": "SignUpForm.test.tsx contains at least 3 it() or test() blocks"
+        },
+        {
+          "name": "story-has-autodocs",
+          "description": "SignUpForm.stories.tsx has tags: ['autodocs'] in the meta object"
+        },
+        {
+          "name": "vitest-config-jsdom",
+          "description": "vitest.config.ts sets environment to 'jsdom'"
+        },
+        {
+          "name": "build-succeeded",
+          "description": "build.txt does not contain lines with 'Build error', 'Type error', or 'Failed to compile'"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Set up a new Next.js project for a blog platform. I have Postgres running locally. I need auth and a database. The project name is `my-blog`, use `postgresql://postgres:postgres@localhost:5432/blog` as the DB URL and Indonesian (`id`) as the second locale.",
+      "expected_output": "A scaffolded project named my-blog that follows the same structure: all tools configured, drizzle schema + migration, better-auth, sign-up form with translations for both en and id locales.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "drizzle-config-correct",
+          "description": "drizzle.config.ts exists, references db/schema.ts as schema path, and sets dialect to postgresql"
+        },
+        {
+          "name": "nextconfig-has-intl-plugin",
+          "description": "next.config.ts imports and uses createNextIntlPlugin (or withNextIntl)"
+        },
+        {
+          "name": "nextconfig-has-ssr-fix",
+          "description": "next.config.ts has serverExternalPackages array that includes 'better-auth'"
+        },
+        {
+          "name": "middleware-has-both-locales",
+          "description": "src/middleware.ts (or i18n/routing.ts) defines both 'en' and 'id' in the locales array"
+        },
+        {
+          "name": "en-messages-has-signupform",
+          "description": "messages/en.json contains a SignUpForm key with at least a 'submit' subkey"
+        },
+        {
+          "name": "locale-messages-file-exists",
+          "description": "messages/id.json exists (the Indonesian locale file)"
+        },
+        {
+          "name": "form-uses-translations",
+          "description": "SignUpForm.tsx calls useTranslations and does NOT contain hardcoded English button or label text"
+        },
+        {
+          "name": "form-uses-rhf-zod",
+          "description": "SignUpForm.tsx imports useForm from react-hook-form and zodResolver from @hookform/resolvers/zod"
+        },
+        {
+          "name": "test-uses-rtl",
+          "description": "SignUpForm.test.tsx imports from @testing-library/react"
+        },
+        {
+          "name": "test-has-three-cases",
+          "description": "SignUpForm.test.tsx contains at least 3 it() or test() blocks"
+        },
+        {
+          "name": "story-has-autodocs",
+          "description": "SignUpForm.stories.tsx has tags: ['autodocs'] in the meta object"
+        },
+        {
+          "name": "vitest-config-jsdom",
+          "description": "vitest.config.ts sets environment to 'jsdom'"
+        },
+        {
+          "name": "build-succeeded",
+          "description": "build.txt does not contain lines with 'Build error', 'Type error', or 'Failed to compile'"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need a fresh web app boilerplate. Project: `team-dashboard`. DB: `postgresql://admin:secret@localhost:5432/dashboard`. Second locale: `id`. Just run through the setup.",
+      "expected_output": "A scaffolded project named team-dashboard. The skill should detect that the database may not exist, attempt migration, and if it fails offer to create the database. All config files present and build passing.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "drizzle-config-correct",
+          "description": "drizzle.config.ts exists, references db/schema.ts as schema path, and sets dialect to postgresql"
+        },
+        {
+          "name": "nextconfig-has-intl-plugin",
+          "description": "next.config.ts imports and uses createNextIntlPlugin (or withNextIntl)"
+        },
+        {
+          "name": "nextconfig-has-ssr-fix",
+          "description": "next.config.ts has serverExternalPackages array that includes 'better-auth'"
+        },
+        {
+          "name": "middleware-has-both-locales",
+          "description": "src/middleware.ts (or i18n/routing.ts) defines both 'en' and 'id' in the locales array"
+        },
+        {
+          "name": "en-messages-has-signupform",
+          "description": "messages/en.json contains a SignUpForm key with at least a 'submit' subkey"
+        },
+        {
+          "name": "locale-messages-file-exists",
+          "description": "messages/id.json exists (the Indonesian locale file)"
+        },
+        {
+          "name": "form-uses-translations",
+          "description": "SignUpForm.tsx calls useTranslations and does NOT contain hardcoded English button or label text"
+        },
+        {
+          "name": "form-uses-rhf-zod",
+          "description": "SignUpForm.tsx imports useForm from react-hook-form and zodResolver from @hookform/resolvers/zod"
+        },
+        {
+          "name": "test-uses-rtl",
+          "description": "SignUpForm.test.tsx imports from @testing-library/react"
+        },
+        {
+          "name": "test-has-three-cases",
+          "description": "SignUpForm.test.tsx contains at least 3 it() or test() blocks"
+        },
+        {
+          "name": "story-has-autodocs",
+          "description": "SignUpForm.stories.tsx has tags: ['autodocs'] in the meta object"
+        },
+        {
+          "name": "vitest-config-jsdom",
+          "description": "vitest.config.ts sets environment to 'jsdom'"
+        },
+        {
+          "name": "build-succeeded",
+          "description": "build.txt does not contain lines with 'Build error', 'Type error', or 'Failed to compile'"
+        }
+      ]
+    }
+  ]
+}
